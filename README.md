@@ -26,6 +26,8 @@ Arguments:
 ```
 
 ## Install
+See also "requirements" below. 
+
 ```
 wget https://github.com/MartinEden/vidette/releases/download/1.0.0/vidette-1.0.0.zip
 unzip vidette-1.0.0.zip
