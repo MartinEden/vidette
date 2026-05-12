@@ -46,10 +46,10 @@ All of these comes as standard on Ubuntu, which is my only test platform so far.
 | Dependency | Use                        |
 | ---------- | -------------------------- |
 | JVM        |                            |
-| ffmpeg     | Re-encoding                |
+| ffmpeg     | re-encoding                |
 | mediainfo  | identifying file durations |
 | gio        | moving files to the trash  |
 
-# Behaviour
+## Behaviour
 If a file is successfully re-encoded, the original file is moved to trash, not
 deleted.
