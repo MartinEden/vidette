@@ -26,6 +26,8 @@ Arguments:
 ```
 
 ## Install
+See also "requirements" below. 
+
 ```
 wget https://github.com/MartinEden/vidette/releases/download/1.0.0/vidette-1.0.0.zip
 unzip vidette-1.0.0.zip
@@ -41,8 +43,6 @@ chmod +x vidette/bin/vidette
 Or simply `gradlew :run`, but then you have to pass arguments in via Gradle.
 
 ## Requirements
-All of these comes as standard on Ubuntu, which is my only test platform so far.
-
 | Dependency | Use                        |
 | ---------- | -------------------------- |
 | JVM        |                            |
