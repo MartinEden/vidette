@@ -11,20 +11,29 @@ import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
 
+const val DEFAULT_MAXIMUM_CONTENT_LOST = 0.2
+const val DEFAULT_MINIMUM_COMPRESSION = 0.66
+const val DEFAULT_BITRATE_THRESHOLD = 2.5
+
 class ReencodeTask : CliktCommand(name = "vidette") {
     val rootPath: File by argument().file()
         .help("Path to recursively search from")
-    val bitrateThreshold: Double by option("--bitrate-threshold", "-b").double().default(2.5)
-        .help("Bitrate in MB/s. Re-encoding is attempted for any file above this threshold")
-    val minimumCompression: Double by option("--minimum-compression", "-c").double().default(0.66)
-        .help("If re-encoding fails to achieve at least this compression factor the original file is left unchanged. e.g. 0.5 = re-encoded version must be no more than half the original size")
+    val bitrateThreshold: Double by option("--bitrate-threshold", "-b").double()
+        .default(DEFAULT_BITRATE_THRESHOLD)
+        .help("Bitrate in MB/s. Re-encoding is attempted for any file above this threshold. Default $DEFAULT_BITRATE_THRESHOLD MB/s.")
+    val minimumCompression: Double by option("--minimum-compression", "-c").double()
+        .default(DEFAULT_MINIMUM_COMPRESSION)
+        .help("If re-encoding fails to achieve at least this compression factor the original file is left unchanged. e.g. 0.5 = re-encoded version must be no more than half the original size. Default $DEFAULT_MINIMUM_COMPRESSION")
+    val maximumContentLost: Double by option("--maximum-content-lost", "-l").double()
+        .default(DEFAULT_MAXIMUM_CONTENT_LOST)
+        .help("In seconds. Re-encoded video may be shorter than the original by this much to allow for rounding errors, etc. Default ${DEFAULT_MAXIMUM_CONTENT_LOST}s")
     val verbose: Boolean by option().flag(default = false)
         .help("More verbose output, including full output from ffmpeg")
 
     private val allCriteria: List<Criteria> by lazy {
         listOf(
             SufficientCompressionCriteria(minimumCompression),
-            NoContentLostCriteria()
+            NoContentLostCriteria(maximumContentLost)
         )
     }
     private val runner: CommandRunner by lazy {

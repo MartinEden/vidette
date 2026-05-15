@@ -19,12 +19,11 @@ class SufficientCompressionCriteria(val minimumCompression: Double) : Criteria {
     }
 }
 
-class NoContentLostCriteria : Criteria {
+class NoContentLostCriteria(val maximumContentLostInSeconds: Double) : Criteria {
     override fun check(original: VideoFile, tempFile: VideoFile): CheckResult {
         val diff = original.durationInSeconds - tempFile.durationInSeconds
-        // If the loss of duration is less than a hundredth of a second then that's
-        // just a rounding error.
-        return if (diff < 0.01) {
+        // If the loss of duration is tiny enough then that's just a rounding error.
+        return if (diff < maximumContentLostInSeconds) {
             CheckResult.Success
         } else {
             CheckResult.Failure("some content was lost ($diff seconds)")
