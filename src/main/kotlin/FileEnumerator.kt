@@ -2,9 +2,7 @@ package eden.vidette
 
 import java.io.File
 
-class FileEnumerator(files: List<VideoFile>) {
-    private val list = files.sortedBy { it.sizeInBytes }
-
+class FileEnumerator(val list: List<VideoFile>) {
     val files : Sequence<VideoFile> = sequence {
         var lastFolder: File? = null
         for (file in list) {
