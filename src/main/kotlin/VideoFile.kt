@@ -28,10 +28,12 @@ class VideoFile(val file: File, private val runner: CommandRunner) {
         File(file.parentFile, file.nameWithoutExtension + ".tmp.mp4")
     }
 
-    fun replaceWith(newFile: File): VideoFile {
-        this.trash()
-        newFile.renameTo(file)
-        return VideoFile(file, runner)
+    fun replace(oldFile: VideoFile): VideoFile {
+        oldFile.trash()
+        val newName = file.name.removeSuffix(".tmp.mp4") + ".mp4"
+        val newFile = File(oldFile.file.parentFile, newName)
+        file.renameTo(newFile)
+        return VideoFile(newFile, runner)
     }
 
     fun trash() {
@@ -39,14 +41,14 @@ class VideoFile(val file: File, private val runner: CommandRunner) {
     }
 
     companion object {
-        fun allIn(root: File, runner: CommandRunner): List<VideoFile> {
+        fun allIn(root: File, runner: CommandRunner, extensions: List<String>): List<VideoFile> {
             println("Searching ${root.absolutePath}")
             val files = root
                 .walk()
-                .filter { it.extension == "mp4" }
+                .filter { it.extension.lowercase() in extensions }
                 .map { VideoFile(it, runner) }
                 .toList()
-            println("Found ${files.size} mp4 files")
+            println("Found ${files.size} video files")
             return files
         }
     }

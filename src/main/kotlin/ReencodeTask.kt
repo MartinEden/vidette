@@ -3,10 +3,7 @@ package eden.vidette
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.arguments.argument
 import com.github.ajalt.clikt.parameters.arguments.help
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.flag
-import com.github.ajalt.clikt.parameters.options.help
-import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.file
 import java.io.File
@@ -14,6 +11,7 @@ import java.io.File
 const val DEFAULT_MAXIMUM_CONTENT_LOST = 0.2
 const val DEFAULT_MINIMUM_COMPRESSION = 0.66
 const val DEFAULT_BITRATE_THRESHOLD = 2.5
+val DEFAULT_EXTENSIONS = listOf("mp4", "mov")
 
 class ReencodeTask : CliktCommand(name = "vidette") {
     val rootPath: File by argument().file()
@@ -27,6 +25,8 @@ class ReencodeTask : CliktCommand(name = "vidette") {
     val maximumContentLost: Double by option("--maximum-content-lost", "-l").double()
         .default(DEFAULT_MAXIMUM_CONTENT_LOST)
         .help("In seconds. Re-encoded video may be shorter than the original by this much to allow for rounding errors, etc. Default ${DEFAULT_MAXIMUM_CONTENT_LOST}s")
+    val extensions: List<String> by option("--extensions", "-e").multiple(default = DEFAULT_EXTENSIONS)
+        .help("Comma-separated list of extensions to process. Default: ${DEFAULT_EXTENSIONS.joinToString(",")}")
     val verbose: Boolean by option().flag(default = false)
         .help("More verbose output, including full output from ffmpeg")
 
@@ -41,7 +41,7 @@ class ReencodeTask : CliktCommand(name = "vidette") {
     }
 
     override fun run() {
-        val files = VideoFile.allIn(rootPath, runner)
+        val files = VideoFile.allIn(rootPath, runner, extensions.map { it.lowercase() })
         val highBitrateFiles = getHighBitrateFiles(files)
 
         var reencodeCount = 0
@@ -74,13 +74,14 @@ class ReencodeTask : CliktCommand(name = "vidette") {
             }
         }
 
-        val newFile = file.replaceWith(file.tempSibling)
+        val newFile = output.replace(file)
         println("☻  (now: ${newFile.sizeInMB} MB)")
         return true
     }
 
     private fun reencode(file: VideoFile) {
-        runner.runCommand("ffmpeg",
+        runner.runCommand(
+            "ffmpeg",
             "-nostdin",
             "-i", file.absolutePath,
             "-vcodec", "libx264",
