@@ -1,7 +1,7 @@
 # Vidette
 Vidette is a CLI Kotlin app that identifies video files that are inefficiently
-encoded and uses ffmpeg to compress them. Currently it only pays attention to
-mp4 files, and targets H.264 as its output format.
+encoded and uses ffmpeg to compress them. Currently it targets H.264 as its 
+output format.
 
 My motivation was that the MP4 files produced by my phone can frequently be
 greatly compressed without perceptible loss of quality - I presume this a
@@ -13,13 +13,13 @@ encode in real time while filming.
 Usage: vidette [<options>] <rootpath>
 
 Options:
-  -b, --bitrate-threshold=<float>    Bitrate in MB/s. Re-encoding is attempted for any file above this
-                                     threshold
-  -c, --minimum-compression=<float>  If re-encoding fails to achieve at least this compression factor the
-                                     original file is left unchanged. e.g. 0.5 = re-encoded version must
-                                     be no more than half the original size
-  --verbose                          More verbose output, including full output from ffmpeg
-  -h, --help                         Show this message and exit
+  -b, --bitrate-threshold=<float>     Bitrate in MB/s. Re-encoding is attempted for any file above this threshold. Default 2.5 MB/s.
+  -c, --minimum-compression=<float>   If re-encoding fails to achieve at least this compression factor the original file is left unchanged.  
+                                      e.g. 0.5 = re-encoded version must be no more than half the original size. Default 0.66
+  -l, --maximum-content-lost=<float>  In seconds. Re-encoded video may be shorter than the original by this much to allow for rounding errors, etc. Default 0.2s
+  -e, --extensions=<text>             Comma-separated list of extensions to process. Default: mp4,mov
+  --verbose                           More verbose output, including full output from ffmpeg
+  -h, --help                          Show this message and exit
 
 Arguments:
   <rootpath>  Path to recursively search from
