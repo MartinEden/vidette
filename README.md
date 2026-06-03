@@ -29,8 +29,8 @@ Arguments:
 See also "requirements" below. 
 
 ```
-wget https://github.com/MartinEden/vidette/releases/download/1.0.0/vidette-1.0.0.zip
-unzip vidette-1.0.0.zip
+wget https://github.com/MartinEden/vidette/releases/download/1.1.0/vidette-1.1.0.zip
+unzip vidette-1.1.0.zip
 chmod +x vidette/bin/vidette
 ```
 
